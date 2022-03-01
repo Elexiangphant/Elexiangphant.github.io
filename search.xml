@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>vs与clion</title>
+      <link href="/2022/03/01/vs%E4%B8%8Eclion/"/>
+      <url>/2022/03/01/vs%E4%B8%8Eclion/</url>
+      
+        <content type="html"><![CDATA[<p>前几天在帮同学处理有关于链表的问题的时候，发现了clion和vs在处理内存分配的时候的一些小小不同<br>函数代码如下，其中head在被传入函数之前已经被释放过</p><pre class=" language-c"><code class="language-c">_Bool <span class="token function">CreateList</span><span class="token punctuation">(</span>DataType <span class="token operator">*</span>addr<span class="token punctuation">,</span> <span class="token keyword">unsigned</span> <span class="token keyword">int</span> n<span class="token punctuation">,</span> Node<span class="token operator">*</span><span class="token operator">*</span> head<span class="token punctuation">)</span><span class="token punctuation">{</span>    <span class="token keyword">int</span> j<span class="token operator">=</span><span class="token number">1</span><span class="token punctuation">;</span>    Node <span class="token operator">*</span>p <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token operator">*</span>head<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token operator">*</span>q <span class="token operator">=</span> <span class="token constant">NULL</span><span class="token punctuation">;</span>    <span class="token keyword">if</span> <span class="token punctuation">(</span>n <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span>        <span class="token keyword">return</span> false<span class="token punctuation">;</span>    <span class="token keyword">else</span> <span class="token punctuation">{</span>        <span class="token punctuation">(</span><span class="token operator">*</span>head<span class="token punctuation">)</span><span class="token operator">=</span><span class="token punctuation">(</span>Node <span class="token operator">*</span><span class="token punctuation">)</span><span class="token function">malloc</span><span class="token punctuation">(</span><span class="token keyword">sizeof</span> <span class="token punctuation">(</span>Node<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>        q<span class="token operator">=</span><span class="token punctuation">(</span>Node <span class="token operator">*</span><span class="token punctuation">)</span><span class="token function">malloc</span><span class="token punctuation">(</span><span class="token keyword">sizeof</span> <span class="token punctuation">(</span>Node<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>        q<span class="token operator">-></span>data <span class="token operator">=</span> addr<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>        q<span class="token operator">-></span>next <span class="token operator">=</span> <span class="token constant">NULL</span><span class="token punctuation">;</span>        p<span class="token operator">-></span>next <span class="token operator">=</span> q<span class="token punctuation">;</span>        p<span class="token operator">=</span>p<span class="token operator">-></span>next<span class="token punctuation">;</span>        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token punctuation">;</span> j<span class="token operator">&lt;</span>n<span class="token punctuation">;</span> j<span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>            q <span class="token operator">=</span> <span class="token punctuation">(</span>Node <span class="token operator">*</span><span class="token punctuation">)</span><span class="token function">malloc</span><span class="token punctuation">(</span><span class="token keyword">sizeof</span><span class="token punctuation">(</span>Node<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>            q<span class="token operator">-></span>data <span class="token operator">=</span> addr<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">;</span>            q<span class="token operator">-></span>next <span class="token operator">=</span> p<span class="token operator">-></span>next<span class="token punctuation">;</span>            p<span class="token operator">-></span>next <span class="token operator">=</span> q<span class="token punctuation">;</span>            p<span class="token operator">=</span>p<span class="token operator">-></span>next<span class="token punctuation">;</span>        <span class="token punctuation">}</span>        <span class="token keyword">return</span> true<span class="token punctuation">;</span>    <span class="token punctuation">}</span><span class="token punctuation">}</span></code></pre><p>在两个IDE的运行情况如下：</p><p>当运行到</p><pre class=" language-c"><code class="language-c">Node <span class="token operator">*</span>p <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token operator">*</span>head<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token operator">*</span>q <span class="token operator">=</span> <span class="token constant">NULL</span><span class="token punctuation">;</span></code></pre><p>vs和clion中的head和p都指向了一块被释放掉的内存</p><img src="https://s3.bmp.ovh/imgs/2022/03/8b0b6f0f339e309a.png" style="zoom: 40%;"><img src="https://gitee.com/yi-xia/blogimage/raw/master/img/20220301083805.png" style="zoom: 50%;"><p>程序继续运行时，当运行到</p><pre><code>(*head)=(Node *)malloc(sizeof (Node));</code></pre><p>编译器分配内存给p或者说head，两个IDE的处理就有了不同</p><img src="https://s3.bmp.ovh/imgs/2022/03/00b2c0ac61aef471.png" style="zoom:40%;"><img src="https://gitee.com/yi-xia/blogimage/raw/master/img/20220301083708.png" style="zoom:50%;"><p>可以看到，vs中head指向了另一块内存，但是ｐ没有发生改变；而在clion中,两个指针同时指向了另一块内存。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 编程学习 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> vs </tag>
+            
+            <tag> clion </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>test</title>
       <link href="/2022/02/26/test/"/>
       <url>/2022/02/26/test/</url>
